@@ -1,64 +1,103 @@
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Github, Instagram, Linkedin, LucideTwitter, Send, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import PageContent from "@/components/page-content";
+import { ThemeToggle } from "@/components/theme-toggle";
+import CursorFollow from "@/components/cursor-follow";
+import FloatingNav from "@/components/floating-nav";
+import Chatbot from "@/components/chatbot";
+import { experiences } from "@/data/experiences";
+import { projects, getFeaturedProjects } from "@/data/projects";
 
-export default function Home() {
+export default function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="bg-theme min-h-screen flex flex-col items-center">
+      <FloatingNav />
+      <CursorFollow />
+      {/* <ThemeToggle /> */}
+      <Chatbot/>
+      {/* <div className="bg-linear-r from-primary to-secondary-color w-full h-30 sm:h-40 lg:hidden  absolute z-1"></div> */}
+      <main className="grid grid-cols-[1fr_1.05fr] sm:mt-14 mt-8 z-2 justify-center max-lg:grid-cols-1 max-lg:gap-8 max-w-310 mx-auto p-6 sm:p-8">
+        <div className="lg:sticky top-36 sm:mt-10 mt-8 self-start flex flex-col justify-between">
+          <div className="bg-primary w-[80%] h-30 -mt-18 -ml-6 rounded-2xl lg:block hidden  absolute z-1"></div>
+          <Image
+            width={150}
+            height={150}
+            src="/vicdevman.jpg"
+            alt="vicdevman avatar"
+            className="object-cover w-18 h-18  rounded-2xl overflow-hidden z-2"
+          />
+          <h1 className="sm:text-4xl mt-6"> Victor Adeiza</h1>
+          <p className="sm:mt-2 mt-0 text-md sm:text-lg font-medium text-primary">
+            {"<Full-Stack AI Engineer/>"}
           </p>
+          <p className="font-medium text-base mt-6">
+            I engineer accessible, intelligent experiences
+            <br /> for the web • AI • Automation • Web3 
+          </p>
+
+          <span className="mt-10 sm:mt-16 flex gap-4 items-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {/* <motion.div whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.95 }}> */}
+                <Link
+                  href="#twitter"
+                  className="p-3 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 inline-block backdrop-blur-sm border border-primary/20"
+                >
+                  <LucideTwitter size={20} />
+                </Link>
+                {/* </motion.div> */}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Follow on Twitter</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {/* <motion.div whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.95 }}> */}
+                <Link
+                  href="#linkedin"
+                  className="p-3 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 inline-block backdrop-blur-sm border border-primary/20"
+                >
+                  <Linkedin size={20} />
+                </Link>
+                {/* </motion.div> */}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Connect on LinkedIn</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {/* <motion.div whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.95 }}> */}
+                <Link
+                  href="#github"
+                  className="p-3 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 inline-block backdrop-blur-sm border border-primary/20"
+                >
+                  <Github size={20} />
+                </Link>
+                {/* </motion.div> */}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>View GitHub Profile</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <button className="px-6 py-3 rounded-xl bg-(--primary-color) text-[#e2e8f0] font-medium text-sm cursor-pointer">
+              Resume
+            </button>
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <PageContent experiences={experiences} projects={getFeaturedProjects()} />
       </main>
     </div>
   );
