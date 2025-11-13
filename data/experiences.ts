@@ -30,10 +30,9 @@ export const experiences: Experience[] = [
       "Framer Motion",
       "Prisma",
       "PostgreSQL",
-      "Stripe",
       "Vercel",
     ],
-    link: "https://guru-innovation.com",
+    link: "https://guruhub.ng",
     location: "Remote",
     achievements: [
       "Reduced component load time by 40% through code optimization and lazy loading",

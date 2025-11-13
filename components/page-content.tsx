@@ -57,6 +57,8 @@ export default function PageContent({
             experiences.map((experience) => (
               <Link
                 href={experience.link}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group hover:bg-primary/5 rounded-xl hover:p-6 py-6 hover:-mx-6"
               >
                 <div className="flex sm:flex-row flex-col items-baseline gap-2 sm:gap-10">
@@ -101,6 +103,8 @@ export default function PageContent({
             projects.map((project) => (
               <Link
                 href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
                 className=" bg-primary/5 rounded-xl p-3 -mx-4 sm:-mx-6"
               >
                 <div className="flex sm:flex-row flex-col items-start gap-2 sm:gap-4">
@@ -116,7 +120,6 @@ export default function PageContent({
                       <span className="group-hover:text-primary">
                         {project.title}
                       </span>
-                     
                     </h2>
                     <p className="mt-2 text-sm font-medium">
                       {project.description}
@@ -130,14 +133,17 @@ export default function PageContent({
                     </div>
                     <div className="flex mt-4 gap-1  items-center">
                       <button className="px-3 hover:bg-primary/20 active:bg-primary/20  flex group gap-1 items-center py-1.5 rounded-md text-accent-foreground/80 font-medium text-sm cursor-pointer">
-                      Live demo  <ArrowUpRight className="w-4 h-4 transition-all duration-300 transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                        Live demo{" "}
+                        <ArrowUpRight className="w-4 h-4 transition-all duration-300 transform group-hover:-translate-y-1 group-hover:translate-x-1" />
                       </button>
-                          <Link
-                            href="#github"
-                            className="py-1.5 px-3 flex gap-1 items-center active:bg-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 text-primary transition-all duration-300 backdrop-blur-sm border-0"
-                          >
-                            <Github className="w-4 h-4" /> Source code
-                          </Link>
+                      <Link
+                        href="#github"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-1.5 px-3 flex gap-1 items-center active:bg-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 text-primary transition-all duration-300 backdrop-blur-sm border-0"
+                      >
+                        <Github className="w-4 h-4" /> Source code
+                      </Link>
                     </div>
                   </div>
                 </div>

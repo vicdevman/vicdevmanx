@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Calendar, MapPin } from "lucide-react";
+import { ArrowLeft, ExternalLink, Calendar, MapPin, Briefcase, Award, Code, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { getExperienceById } from "@/data/experiences";
+import { Experience, getExperienceById } from "@/data/experiences";
 import CursorFollow from "@/components/cursor-follow";
 import FloatingNav from "@/components/floating-nav";
 import { notFound } from "next/navigation";
@@ -15,9 +15,54 @@ const fadeInUp = {
 };
 
 export default function ExperienceDetailPage({ params }: { params: { id: string } }) {
-  const experience = getExperienceById(params.id);
+  const [experience, setExperience] = useState<Experience | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  if (!experience) {
+  useEffect(() => {
+    const fetchExperience = async () => {
+      try {
+        // First try to get from local data
+        const localExperience = getExperienceById(params.id);
+        
+        if (localExperience) {
+          setExperience(localExperience);
+          setLoading(false);
+          return;
+        }
+        
+        // If not found locally, try API
+        const response = await fetch(`/api/experience/${params.id}`);
+        
+        if (!response.ok) {
+          throw new Error('Experience not found');
+        }
+        
+        const data = await response.json();
+        setExperience(data);
+      } catch (err) {
+        console.error('Error fetching experience:', err);
+        setError('Experience not found');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchExperience();
+  }, [params.id]);
+  
+  if (loading) {
+    return (
+      <div className="bg-theme min-h-screen flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 size={40} className="animate-spin text-primary" />
+          <p className="text-lg font-medium">Loading experience details...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error || !experience) {
     notFound();
   }
 
@@ -26,10 +71,12 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
       <FloatingNav />
       <CursorFollow />
       
-      <main className="w-full max-w-4xl mx-auto p-6 sm:p-8 mt-16">
+      <main className="w-full max-w-5xl mx-auto p-6 sm:p-8 mt-16">
         <div className="flex items-center mb-8">
-          <Link href="/experiences" className="flex items-center gap-2 text-primary hover:underline">
-            <ArrowLeft size={16} />
+          <Link href="/experiences" className="group flex items-center gap-2 text-primary hover:underline transition-all">
+            <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary/20 transition-all">
+              <ArrowLeft size={16} />
+            </div>
             <span>Back to Experiences</span>
           </Link>
         </div>
@@ -39,77 +86,132 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
           initial="initial"
           animate="animate"
           transition={{ duration: 0.6, ease: "easeOut" }}
+          className="space-y-8"
         >
-          <div className="bg-primary/5 rounded-xl p-6 mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          {/* Hero Section */}
+          <div className="bg-linear-to-br from-primary/5 to-primary/10 rounded-2xl p-8 border border-primary/10 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-3xl sm:text-4xl font-bold">{experience.company}</h1>
-                <p className="text-xl text-primary mt-1">{experience.title}</p>
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full mb-4 text-xs font-medium text-primary">
+                  <Calendar size={14} />
+                  {experience.date}
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-bold mb-2">{experience.company}</h1>
+                <p className="text-xl text-primary">{experience.title}</p>
+                
+                {experience.location && (
+                  <div className="flex items-center gap-1.5 mt-3 text-sm text-muted-foreground">
+                    <MapPin size={16} />
+                    <span>{experience.location}</span>
+                  </div>
+                )}
               </div>
               
               <Link
                 href={experience.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-primary text-white rounded-lg flex items-center gap-1 text-sm font-medium hover:bg-primary/90 w-fit"
+                className="px-5 py-3 bg-primary text-white rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-primary/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap"
               >
-                Visit Company <ExternalLink size={14} />
+                <ExternalLink size={16} />
+                Visit Company
               </Link>
             </div>
-            
-            <div className="flex flex-wrap gap-4 mb-6 text-sm">
-              <div className="flex items-center gap-1 text-faint">
-                <Calendar size={16} />
-                <span>{experience.date}</span>
-              </div>
-              
-              {experience.location && (
-                <div className="flex items-center gap-1 text-faint">
-                  <MapPin size={16} />
-                  <span>{experience.location}</span>
+          </div>
+          
+          {/* Info Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 hover:border-primary/20 transition-all">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <Briefcase size={18} className="text-primary" />
                 </div>
-              )}
+                <h3 className="font-semibold">Position</h3>
+              </div>
+              <p className="text-sm text-muted-foreground">{experience.title}</p>
+            </div>
+            
+            <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 hover:border-primary/20 transition-all">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <Calendar size={18} className="text-primary" />
+                </div>
+                <h3 className="font-semibold">Duration</h3>
+              </div>
+              <p className="text-sm text-muted-foreground">{experience.date}</p>
+            </div>
+            
+            {experience.location && (
+              <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 hover:border-primary/20 transition-all">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <MapPin size={18} className="text-primary" />
+                  </div>
+                  <h3 className="font-semibold">Location</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">{experience.location}</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Role Description */}
+          <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
+            <h2 className="text-xl font-semibold mb-4">Role Overview</h2>
+            <div className="prose prose-sm max-w-none text-muted-foreground">
+              <p className="leading-relaxed">
+                {experience.longDescription || experience.description}
+              </p>
             </div>
           </div>
           
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Role Overview</h2>
-            <p className="text-base leading-relaxed mb-4">
-              {experience.longDescription || experience.description}
-            </p>
-          </div>
-          
+          {/* Achievements */}
           {experience.achievements && (
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Key Achievements</h2>
-              <ul className="space-y-3">
+            <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <Award size={18} className="text-primary" />
+                </div>
+                <h2 className="text-xl font-semibold">Key Achievements</h2>
+              </div>
+              
+              <div className="space-y-3 mt-4">
                 {experience.achievements.map((achievement, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <div className="min-w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs mt-0.5">
-                      ✓
+                  <div key={index} className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-all">
+                    <div className="min-w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs mt-0.5">
+                      {index + 1}
                     </div>
-                    <p>{achievement}</p>
-                  </li>
+                    <p className="text-sm">{achievement}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
           
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Technologies & Skills</h2>
-            <div className="flex flex-wrap gap-2">
+          {/* Technologies */}
+          <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-primary/10 p-2 rounded-full">
+                <Code size={18} className="text-primary" />
+              </div>
+              <h2 className="text-xl font-semibold">Technologies & Skills</h2>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 mt-4">
               {experience.techStack.map((tech) => (
-                <span key={tech} className="badge">{tech}</span>
+                <span key={tech} className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm hover:bg-primary/20 transition-all cursor-default">
+                  {tech}
+                </span>
               ))}
             </div>
           </div>
           
+          {/* Areas of Focus */}
           {experience.category && (
-            <div className="mb-8">
+            <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
               <h2 className="text-xl font-semibold mb-4">Areas of Focus</h2>
               <div className="flex flex-wrap gap-2">
                 {experience.category.map((cat) => (
-                  <span key={cat} className="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
+                  <span key={cat} className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm hover:bg-primary/20 transition-all cursor-default">
                     {cat}
                   </span>
                 ))}
@@ -117,18 +219,23 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
             </div>
           )}
           
-          <div className="border-t border-primary/10 pt-6 mt-8">
+          {/* Footer */}
+          <div className="border-t border-primary/10 pt-8 mt-8">
             <h2 className="text-xl font-semibold mb-4">Explore More</h2>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/experiences"
-                className="px-4 py-2 bg-primary/10 text-primary rounded-lg inline-flex items-center gap-1 text-sm font-medium hover:bg-primary/20"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 bg-primary/10 text-primary rounded-xl inline-flex items-center gap-2 text-sm font-medium hover:bg-primary/20 transition-all"
               >
                 All Experiences
               </Link>
               <Link
                 href="/projects"
-                className="px-4 py-2 bg-primary/10 text-primary rounded-lg inline-flex items-center gap-1 text-sm font-medium hover:bg-primary/20"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 bg-primary/10 text-primary rounded-xl inline-flex items-center gap-2 text-sm font-medium hover:bg-primary/20 transition-all"
               >
                 View Projects
               </Link>

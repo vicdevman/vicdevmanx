@@ -19,7 +19,7 @@ export default function ProjectCardChat({ project }: ProjectCardChatProps) {
       transition={{ duration: 0.3 }}
       className="bg-primary/5 rounded-lg p-3 mb-3 hover:shadow-md transition-all duration-300"
     >
-      <div className="flex gap-3 w-96">
+      <div className="flex gap-3 w-full min-w-72">
         <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
           <Image
             src={project.image}
@@ -45,6 +45,8 @@ export default function ProjectCardChat({ project }: ProjectCardChatProps) {
           <div className="flex gap-2 mt-2">
             <Link
               href={`/projects/${project.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-xs px-2 py-1 bg-primary text-white rounded flex items-center gap-1 hover:bg-primary/90"
             >
               Details <ArrowUpRight size={10} />
@@ -58,6 +60,17 @@ export default function ProjectCardChat({ project }: ProjectCardChatProps) {
                 className="text-xs px-2 py-1 bg-primary/10 text-primary rounded flex items-center gap-1"
               >
                 <Github size={10} /> Code
+              </Link>
+            )}
+            
+            {project.link && (
+              <Link
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs px-2 py-1 bg-primary/10 text-primary rounded flex items-center gap-1"
+              >
+                <ArrowUpRight size={10} /> Live
               </Link>
             )}
           </div>

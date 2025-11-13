@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { projects } from "@/data/projects";
 import { experiences } from "@/data/experiences";
+import { skills, skillCategories } from "@/data/skills";
 
 // Define the system prompt that helps the AI understand the portfolio context
 const generateSystemPrompt = () => {
@@ -16,7 +17,8 @@ ABOUT VICTOR:
 - Enjoys climbing, playing tennis, and gaming in spare time
 
 SKILLS:
-${Array.from(new Set(projects.flatMap(p => p.techStack))).join(", ")}
+${skillCategories.map(category => `
+- ${category.name}: ${skills.filter(skill => skill.category.includes(category.id)).map(s => s.name).join(', ')}`).join('')}
 
 PROJECTS:
 ${projects.map(project => `

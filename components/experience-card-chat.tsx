@@ -49,6 +49,8 @@ export default function ExperienceCardChat({ experience }: ExperienceCardChatPro
         <div className="flex gap-2 mt-1">
           <Link
             href={`/experiences/${experience.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-xs px-2 py-1 bg-primary text-white rounded flex items-center gap-1 hover:bg-primary/90"
           >
             Details <ArrowUpRight size={10} />

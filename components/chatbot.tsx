@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { ArrowUp, X, Loader2 } from "lucide-react";
+import {
+  ArrowUp,
+  X,
+  Loader2,
+  Expand,
+  Maximize2,
+  Minimize2,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import {
@@ -15,13 +22,16 @@ import {
   getBlockchainExperiences,
   getAIExperiences,
 } from "@/data/experiences";
+import { skills, getSkillsByCategory, getFeaturedSkills } from "@/data/skills";
 import ChatProjectList from "./chat-project-list";
+import ChatSkillsList from "./chat-skills-list";
+import ChatContactForm from "./chat-contact-form";
 
 interface Message {
   text: string;
   sender: "user" | "bot";
   specialContent?: {
-    type: "projects" | "experiences";
+    type: "projects" | "experiences" | "skills" | "contact";
     category?: string;
     title: string;
   };
@@ -33,10 +43,12 @@ interface ChatMessage {
 }
 
 const suggestions = [
-  "Tell me about your projects",
-  "Show me your Web3 projects",
-  "What AI experience do you have?",
-  "What technologies do you work with?",
+  { title: "Projects", msg: "Tell me about your projects" },
+  { title: "Web3 projects", msg: "Show me your Web3 projects" },
+  { title: "AI projects", msg: "What AI experience do you have?" },
+  { title: "Skills", msg: "What skills do you have?" },
+  { title: "Experience", msg: "What experience do you have?" },
+  { title: "Contact", msg: "I want to get in touch" },
 ];
 
 export default function Chatbot() {
@@ -48,7 +60,7 @@ export default function Chatbot() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const chatHistory = useRef<ChatMessage[]>([]);
 
-  // Helper function to check if message is about projects or experiences
+  // Helper function to check if message is about projects, experiences, skills or contact
   const checkForSpecialContent = (text: string) => {
     const lowerText = text.toLowerCase();
 
@@ -103,6 +115,74 @@ export default function Chatbot() {
       return {
         type: "experiences" as const,
         title: "Work Experience",
+      };
+    }
+
+    // Check for skills-related queries
+    if (
+      lowerText.includes("frontend skill") ||
+      lowerText.includes("front-end skill") ||
+      lowerText.includes("front end skill")
+    ) {
+      return {
+        type: "skills" as const,
+        category: "frontend",
+        title: "Frontend Development Skills",
+      };
+    } else if (
+      lowerText.includes("backend skill") ||
+      lowerText.includes("back-end skill") ||
+      lowerText.includes("back end skill")
+    ) {
+      return {
+        type: "skills" as const,
+        category: "backend",
+        title: "Backend Development Skills",
+      };
+    } else if (
+      lowerText.includes("ai skill") ||
+      lowerText.includes("machine learning skill")
+    ) {
+      return {
+        type: "skills" as const,
+        category: "ai",
+        title: "AI & Machine Learning Skills",
+      };
+    } else if (
+      lowerText.includes("web3 skill") ||
+      lowerText.includes("blockchain skill")
+    ) {
+      return {
+        type: "skills" as const,
+        category: "web3",
+        title: "Web3 & Blockchain Skills",
+      };
+    } else if (
+      lowerText.match(/what\s+(are\s+)?(your\s+)?skills/) ||
+      lowerText.match(/tell\s+(me\s+)?about\s+(your\s+)?skills/) ||
+      lowerText.match(/what\s+technologies/) ||
+      lowerText.match(/what\s+tech\s+stack/) ||
+      lowerText.includes("what can you do")
+    ) {
+      return {
+        type: "skills" as const,
+        title: "Technical Skills",
+      };
+    }
+
+    // Check for contact-related queries
+    if (
+      lowerText.includes("contact") ||
+      lowerText.includes("get in touch") ||
+      lowerText.includes("reach out") ||
+      lowerText.includes("send message") ||
+      lowerText.includes("send email") ||
+      lowerText.includes("hire you") ||
+      lowerText.includes("connect with")
+    ) {
+      return {
+        type: "contact" as const,
+        title: "Contact Form",
       };
     }
 
@@ -200,7 +280,7 @@ export default function Chatbot() {
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
             className="w-full max-w-lg h-[500px] bg-primary/5 backdrop-blur-2xl border border-primary/10 rounded-2xl flex flex-col shadow-2xl"
           >
-            <div className="flex items-center justify-between p-4 border-b border-primary/10">
+            <div className="flex items-center justify-between p-2.5 border-b border-primary/10">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                   V
@@ -231,49 +311,65 @@ export default function Chatbot() {
                     msg.sender === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {/* <div className="flex flex-col max-w-full"> */}
-                    {msg.sender === "bot" && msg.specialContent && (
-                      <div className="mb-3 w-full">
-                        {msg.specialContent.type === "projects" && (
-                          <ChatProjectList
-                            title={msg.specialContent.title}
-                            projects={
-                              msg.specialContent.category === "Web3"
-                                ? getWeb3Projects()
-                                : msg.specialContent.category === "AI"
-                                ? getAIProjects()
-                                : projects
-                            }
-                          />
-                        )}
+                  {msg.sender === "bot" && msg.specialContent && (
+                    <div className="mb-3 w-full">
+                      {msg.specialContent.type === "projects" && (
+                        <ChatProjectList
+                          title={msg.specialContent.title}
+                          projects={
+                            msg.specialContent.category === "Web3"
+                              ? getWeb3Projects()
+                              : msg.specialContent.category === "AI"
+                              ? getAIProjects()
+                              : projects
+                          }
+                        />
+                      )}
 
-                        {msg.specialContent.type === "experiences" && (
-                          <ChatProjectList
-                            title={msg.specialContent.title}
-                            experiences={
-                              msg.specialContent.category === "Blockchain"
-                                ? getBlockchainExperiences()
-                                : msg.specialContent.category === "AI"
-                                ? getAIExperiences()
-                                : experiences
-                            }
-                          />
-                        )}
-                      </div>
-                    )}
+                      {msg.specialContent.type === "experiences" && (
+                        <ChatProjectList
+                          title={msg.specialContent.title}
+                          experiences={
+                            msg.specialContent.category === "Blockchain"
+                              ? getBlockchainExperiences()
+                              : msg.specialContent.category === "AI"
+                              ? getAIExperiences()
+                              : experiences
+                          }
+                        />
+                      )}
 
-                      {msg.sender === "bot" && msg.specialContent ? <></> :  <div
+                      {msg.specialContent.type === "skills" && (
+                        <ChatSkillsList
+                          title={msg.specialContent.title}
+                          skills={
+                            msg.specialContent.category
+                              ? getSkillsByCategory(msg.specialContent.category)
+                              : getFeaturedSkills()
+                          }
+                          category={msg.specialContent.category}
+                        />
+                      )}
+
+                      {msg.specialContent.type === "contact" && (
+                        <ChatContactForm />
+                      )}
+                    </div>
+                  )}
+
+                  {msg.sender === "bot" && msg.specialContent ? (
+                    <></>
+                  ) : (
+                    <div
                       className={`px-4 py-2.5 rounded-2xl max-w-[85%] text-sm font-medium ${
                         msg.sender === "user"
-                          ? "bg-primary text-white"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-primary text-white rounded-br-none"
+                          : "bg-primary/20 text-white/80 backdrop-blur-lg rounded-bl-none"
                       }`}
                     >
-                    {msg.text}
-
-                      {/* Special UI for projects and experiences */}
-                    </div>}
-                  {/* </div> */}
+                      {msg.text}
+                    </div>
+                  )}
                 </motion.div>
               ))}
               {isTyping && (
@@ -303,14 +399,14 @@ export default function Chatbot() {
             </div>
 
             {
-              <div className="p-4 pt-2 flex flex-wrap gap-2">
+              <div className="p-2.5 pt-1.5 flex flex-wrap gap-2">
                 {suggestions.map((s) => (
                   <button
-                    key={s}
-                    onClick={() => handleSendMessage(s)}
+                    key={s.title}
+                    onClick={() => handleSendMessage(s.msg)}
                     className="px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium hover:bg-primary/20 transition-colors"
                   >
-                    {s}
+                    {s.title}
                   </button>
                 ))}
               </div>
@@ -326,8 +422,22 @@ export default function Chatbot() {
           value={inputValue}
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
+          onClick={() => {
+            if (messages.length !== 0) setIsChatOpen(true);
+          }}
           className="pl-3 focus:outline-none bg-transparent w-52 sm:focus:w-80 focus:w-64 transition-all duration-300 placeholder:text-sm placeholder:text-faint font-medium"
         />
+        <button
+          onClick={() => {
+            if (!isChatOpen) setIsChatOpen(true);
+            else setIsChatOpen(false);
+          }}
+          className={`bg-primary/10 p-2 rounded-lg text-white font-medium text-sm cursor-pointer disabled:opacity-50 ${
+            messages.length == 0 ? "hidden" : "block"
+          }`}
+        >
+          {isChatOpen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+        </button>
         <button
           onClick={() => {
             handleSendMessage(inputValue);
