@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Calendar, MapPin, Briefcase, Award, Code, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ExternalLink,
+  Calendar,
+  MapPin,
+  Briefcase,
+  Award,
+  Code,
+  Loader2,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Experience, getExperienceById } from "@/data/experiences";
 import CursorFollow from "@/components/cursor-follow";
@@ -14,43 +23,39 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 };
 
-export default function ExperienceDetailPage({ params }: { params: { id: string } }) {
+export default function ExperienceDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const [experience, setExperience] = useState<Experience | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [id, setParamId] = useState("");
+
+  async function resolveParams() {
+    const param = await params;
+    setParamId(param.id);
+  }
+
   useEffect(() => {
-    const fetchExperience = async () => {
-      try {
-        // First try to get from local data
-        const localExperience = getExperienceById(params.id);
-        
-        if (localExperience) {
-          setExperience(localExperience);
-          setLoading(false);
-          return;
-        }
-        
-        // If not found locally, try API
-        const response = await fetch(`/api/experience/${params.id}`);
-        
-        if (!response.ok) {
-          throw new Error('Experience not found');
-        }
-        
-        const data = await response.json();
-        setExperience(data);
-      } catch (err) {
-        console.error('Error fetching experience:', err);
-        setError('Experience not found');
-      } finally {
-        setLoading(false);
+    resolveParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (id) {
+      const foundExperience = getExperienceById(id);
+      
+      if (foundExperience) {
+        setExperience(foundExperience);
+      } else {
+        setError("Experience not found");
       }
-    };
-    
-    fetchExperience();
-  }, [params.id]);
-  
+      
+      setLoading(false);
+    }
+  }, [id]);
+
   if (loading) {
     return (
       <div className="bg-theme min-h-screen flex flex-col items-center justify-center">
@@ -61,7 +66,7 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
       </div>
     );
   }
-  
+
   if (error || !experience) {
     notFound();
   }
@@ -70,17 +75,20 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
     <div className="bg-theme min-h-screen flex flex-col items-center">
       <FloatingNav />
       <CursorFollow />
-      
+
       <main className="w-full max-w-5xl mx-auto p-6 sm:p-8 mt-16">
         <div className="flex items-center mb-8">
-          <Link href="/experiences" className="group flex items-center gap-2 text-primary hover:underline transition-all">
+          <Link
+            href="/experiences"
+            className="group flex items-center gap-2 text-primary hover:underline transition-all"
+          >
             <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary/20 transition-all">
               <ArrowLeft size={16} />
             </div>
             <span>Back to Experiences</span>
           </Link>
         </div>
-        
+
         <motion.div
           variants={fadeInUp}
           initial="initial"
@@ -96,9 +104,11 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
                   <Calendar size={14} />
                   {experience.date}
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-bold mb-2">{experience.company}</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+                  {experience.company}
+                </h1>
                 <p className="text-xl text-primary">{experience.title}</p>
-                
+
                 {experience.location && (
                   <div className="flex items-center gap-1.5 mt-3 text-sm text-muted-foreground">
                     <MapPin size={16} />
@@ -106,7 +116,7 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
                   </div>
                 )}
               </div>
-              
+
               <Link
                 href={experience.link}
                 target="_blank"
@@ -118,7 +128,7 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
               </Link>
             </div>
           </div>
-          
+
           {/* Info Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 hover:border-primary/20 transition-all">
@@ -128,9 +138,11 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
                 </div>
                 <h3 className="font-semibold">Position</h3>
               </div>
-              <p className="text-sm text-muted-foreground">{experience.title}</p>
+              <p className="text-sm text-muted-foreground">
+                {experience.title}
+              </p>
             </div>
-            
+
             <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 hover:border-primary/20 transition-all">
               <div className="flex items-center gap-3 mb-3">
                 <div className="bg-primary/10 p-2 rounded-full">
@@ -140,7 +152,7 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
               </div>
               <p className="text-sm text-muted-foreground">{experience.date}</p>
             </div>
-            
+
             {experience.location && (
               <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 hover:border-primary/20 transition-all">
                 <div className="flex items-center gap-3 mb-3">
@@ -149,11 +161,13 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
                   </div>
                   <h3 className="font-semibold">Location</h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{experience.location}</p>
+                <p className="text-sm text-muted-foreground">
+                  {experience.location}
+                </p>
               </div>
             )}
           </div>
-          
+
           {/* Role Description */}
           <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
             <h2 className="text-xl font-semibold mb-4">Role Overview</h2>
@@ -163,7 +177,7 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
               </p>
             </div>
           </div>
-          
+
           {/* Achievements */}
           {experience.achievements && (
             <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
@@ -173,10 +187,13 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
                 </div>
                 <h2 className="text-xl font-semibold">Key Achievements</h2>
               </div>
-              
+
               <div className="space-y-3 mt-4">
                 {experience.achievements.map((achievement, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-all">
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-all"
+                  >
                     <div className="min-w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs mt-0.5">
                       {index + 1}
                     </div>
@@ -186,7 +203,7 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
               </div>
             </div>
           )}
-          
+
           {/* Technologies */}
           <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
             <div className="flex items-center gap-3 mb-4">
@@ -195,30 +212,36 @@ export default function ExperienceDetailPage({ params }: { params: { id: string 
               </div>
               <h2 className="text-xl font-semibold">Technologies & Skills</h2>
             </div>
-            
+
             <div className="flex flex-wrap gap-2 mt-4">
               {experience.techStack.map((tech) => (
-                <span key={tech} className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm hover:bg-primary/20 transition-all cursor-default">
+                <span
+                  key={tech}
+                  className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm hover:bg-primary/20 transition-all cursor-default"
+                >
                   {tech}
                 </span>
               ))}
             </div>
           </div>
-          
+
           {/* Areas of Focus */}
           {experience.category && (
             <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
               <h2 className="text-xl font-semibold mb-4">Areas of Focus</h2>
               <div className="flex flex-wrap gap-2">
                 {experience.category.map((cat) => (
-                  <span key={cat} className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm hover:bg-primary/20 transition-all cursor-default">
+                  <span
+                    key={cat}
+                    className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm hover:bg-primary/20 transition-all cursor-default"
+                  >
                     {cat}
                   </span>
                 ))}
               </div>
             </div>
           )}
-          
+
           {/* Footer */}
           <div className="border-t border-primary/10 pt-8 mt-8">
             <h2 className="text-xl font-semibold mb-4">Explore More</h2>
