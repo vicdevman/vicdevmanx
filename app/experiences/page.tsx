@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { experiences, Experience } from "@/data/experiences";
 import CursorFollow from "@/components/cursor-follow";
 import FloatingNav from "@/components/floating-nav";
+import MainHeader from "@/components/main-header";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -23,10 +24,10 @@ export default function ExperiencesPage() {
 
   return (
     <div className="bg-theme min-h-screen flex flex-col items-center">
-      <FloatingNav />
+      {/* <MainHeader /> */}
       <CursorFollow />
       
-      <main className="w-full max-w-6xl mx-auto p-6 sm:p-8 mt-16">
+      <main className="w-full max-w-6xl mx-auto p-6 sm:p-8 mt-6">
         <div className="flex items-center justify-between mb-8">
           <Link href="/" className="group flex items-center gap-2 text-primary hover:underline transition-all">
             <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary/20 transition-all">

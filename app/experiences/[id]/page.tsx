@@ -16,7 +16,8 @@ import { motion } from "framer-motion";
 import { Experience, getExperienceById } from "@/data/experiences";
 import CursorFollow from "@/components/cursor-follow";
 import FloatingNav from "@/components/floating-nav";
-import { notFound } from "next/navigation";
+import MainHeader from "@/components/main-header";
+import { notFound, useRouter } from "next/navigation";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -71,22 +72,24 @@ export default function ExperienceDetailPage({
     notFound();
   }
 
+  const router = useRouter();
+
   return (
     <div className="bg-theme min-h-screen flex flex-col items-center">
-      <FloatingNav />
+      {/* <MainHeader /> */}
       <CursorFollow />
 
-      <main className="w-full max-w-5xl mx-auto p-6 sm:p-8 mt-16">
+      <main className="w-full max-w-5xl mx-auto p-6 sm:p-8 mt-24">
         <div className="flex items-center mb-8">
-          <Link
-            href="/experiences"
+          <button
+            onClick={() => router.back()}
             className="group flex items-center gap-2 text-primary hover:underline transition-all"
           >
             <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary/20 transition-all">
               <ArrowLeft size={16} />
             </div>
-            <span>Back to Experiences</span>
-          </Link>
+            <span>Back</span>
+          </button>
         </div>
 
         <motion.div

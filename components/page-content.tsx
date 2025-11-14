@@ -123,8 +123,6 @@ export default function PageContent({
             ))}
           <Link 
             href="/experiences"
-            target="_blank"
-            rel="noopener noreferrer"
             className="self-end font-semibold text-primary flex items-center gap-1 group hover:text-primary/80 transition-all mt-4"
           >
             View all experiences
@@ -146,9 +144,7 @@ export default function PageContent({
           {projects &&
             projects.map((project) => (
               <Link
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`projects/${project.id}`}
                 className=" bg-primary/5 rounded-xl p-3 -mx-4 sm:-mx-6"
               >
                 <div className="flex sm:flex-row flex-col items-start gap-2 sm:gap-4">
@@ -176,14 +172,20 @@ export default function PageContent({
                       ))}
                     </div>
                     <div className="flex mt-4 gap-1  items-center">
-                      <button className="px-3 hover:bg-primary/20 active:bg-primary/20  flex group gap-1 items-center py-1.5 rounded-md text-accent-foreground/80 font-medium text-sm cursor-pointer">
+                      <Link
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-3 hover:bg-primary/20 active:bg-primary/20  flex group gap-1 items-center py-1.5 rounded-md text-accent-foreground/80 font-medium text-sm cursor-pointer">
                         Live demo{" "}
                         <ArrowUpRight className="w-4 h-4 transition-all duration-300 transform group-hover:-translate-y-1 group-hover:translate-x-1" />
-                      </button>
+                      </Link>
                       <Link
                         href={project.githubLink}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                         className="py-1.5 px-3 flex gap-1 items-center active:bg-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 text-primary transition-all duration-300 backdrop-blur-sm border-0"
                       >
                         <Github className="w-4 h-4" /> Source code
@@ -195,8 +197,6 @@ export default function PageContent({
             ))}
           <Link 
             href="/projects"
-            target="_blank"
-            rel="noopener noreferrer"
             className="self-end font-semibold text-primary flex items-center gap-1 group hover:text-primary/80 transition-all mt-4"
           >
             View all projects
