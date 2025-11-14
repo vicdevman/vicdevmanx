@@ -307,8 +307,8 @@ export default function Chatbot() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0 }}
-                  className={`flex ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
+                  className={`flex flex-col ${
+                    msg.sender === "user" ? "items-end" : "items-start"
                   }`}
                 >
                   {msg.sender === "bot" && msg.specialContent && (
@@ -357,7 +357,7 @@ export default function Chatbot() {
                     </div>
                   )}
 
-                  {msg.sender === "bot" && msg.specialContent ? (
+                  {msg.sender === "user" && msg.specialContent ? (
                     <></>
                   ) : (
                     <div

@@ -28,10 +28,21 @@ export default function ProjectsPage() {
       <CursorFollow />
       
       <main className="w-full max-w-6xl mx-auto p-6 sm:p-8 mt-16">
-        <div className="flex items-center mb-8">
-          <Link href="/" className="flex items-center gap-2 text-primary hover:underline">
-            <ArrowLeft size={16} />
+        <div className="flex items-center justify-between mb-8">
+          <Link href="/" className="group flex items-center gap-2 text-primary hover:underline transition-all">
+            <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary/20 transition-all">
+              <ArrowLeft size={16} />
+            </div>
             <span>Back to Home</span>
+          </Link>
+          <Link 
+            href="/" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary flex items-center gap-1 group hover:text-primary/80 transition-all"
+          >
+            View Portfolio
+            <ArrowUpRight className="w-4 h-4 transition-all duration-300 transform group-hover:-translate-y-1 group-hover:translate-x-1" />
           </Link>
         </div>
         

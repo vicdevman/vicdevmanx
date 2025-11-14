@@ -39,8 +39,8 @@ export default function App() {
             {"<Full-Stack AI Engineer/>"}
           </p>
           <p className="font-medium text-base mt-6">
-            I engineer accessible, intelligent experiences
-            <br /> for the web • AI • Automation • Web3 
+            I engineer accessible, intelligent <br /> experiences
+            for the web • AI • Web3 
           </p>
 
           <span className="mt-10 sm:mt-16 flex gap-4 items-center">

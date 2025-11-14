@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Github } from "lucide-react";
+import { ArrowUpRight, Github, Code } from "lucide-react";
 import ContactForm from "@/components/contact-form";
+import { getFeaturedSkills } from "@/data/skills";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -18,6 +19,7 @@ export default function PageContent({
   experiences: any[];
   projects: any[];
 }) {
+  const featuredSkills = getFeaturedSkills();
   return (
     <div className="tracking-normal text-base max-w-prose">
       <motion.div
@@ -32,16 +34,49 @@ export default function PageContent({
         <p className="text-base font-medium">
           I’m a developer passionate about crafting accessible, pixel-perfect
           user interfaces that blend thoughtful design with robust engineering.
-          My favorite work lies at the intersection of design and development,
-          creating experiences that not only look great but are meticulously
-          built for performance and usability.
+          My favorite work lies at the intersection of design, AI, and
+          development, building experiences that not only look great, but are
+          intelligently powered, future-ready, and meticulously engineered for
+          performance, usability, and scalability across the modern web and Web3
+          ecosystems.
         </p>
         <p className="mt-4 text-base font-medium">
-          In my spare time, I’m usually climbing, playing tennis, hanging out
-          with my wife and two cats, or running around Hyrule searching for
-          Korok seeds
+          In my spare time, I’m usually diving into AI research, experimenting
+          with on-chain ideas, or watching anime.
         </p>
       </motion.div>
+
+      {/* <motion.div
+        id="skills"
+        variants={fadeInUp}
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <h2 className="mb-6 mt-36">Tech Stack</h2>
+        <div className="bg-primary/5 p-6 rounded-xl border border-primary/10">
+          <div className="flex flex-wrap gap-4 items-center justify-center">
+            {featuredSkills.map((skill) => (
+              <div 
+                key={skill.id}
+                className="flex flex-col items-center gap-2 p-3 bg-primary/5 rounded-lg hover:bg-primary/10 transition-all group w-24 h-24"
+              >
+                <div className="w-12 h-12 flex items-center justify-center bg-white/80 dark:bg-black/30 rounded-lg p-2 shadow-sm group-hover:scale-110 transition-all">
+                  <Image 
+                    src={skill.icon || `/icons/code.svg`}
+                    alt={skill.name}
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
+                </div>
+                <span className="text-xs font-medium text-center">{skill.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div> */}
 
       <motion.div
         id="experience"
@@ -86,6 +121,15 @@ export default function PageContent({
                 </div>
               </Link>
             ))}
+          <Link 
+            href="/experiences"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-end font-semibold text-primary flex items-center gap-1 group hover:text-primary/80 transition-all mt-4"
+          >
+            View all experiences
+            <ArrowUpRight className="w-4 h-4 transition-all duration-300 transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+          </Link>
         </div>
       </motion.div>
 
@@ -137,7 +181,7 @@ export default function PageContent({
                         <ArrowUpRight className="w-4 h-4 transition-all duration-300 transform group-hover:-translate-y-1 group-hover:translate-x-1" />
                       </button>
                       <Link
-                        href="#github"
+                        href={project.githubLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="py-1.5 px-3 flex gap-1 items-center active:bg-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 text-primary transition-all duration-300 backdrop-blur-sm border-0"
@@ -149,6 +193,15 @@ export default function PageContent({
                 </div>
               </Link>
             ))}
+          <Link 
+            href="/projects"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-end font-semibold text-primary flex items-center gap-1 group hover:text-primary/80 transition-all mt-4"
+          >
+            View all projects
+            <ArrowUpRight className="w-4 h-4 transition-all duration-300 transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+          </Link>
         </div>
       </motion.div>
 

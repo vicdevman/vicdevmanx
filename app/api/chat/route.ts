@@ -5,8 +5,9 @@ import { skills, skillCategories } from "@/data/skills";
 
 // Define the system prompt that helps the AI understand the portfolio context
 const generateSystemPrompt = () => {
-  return `You are an AI assistant for Victor Adeiza, a Full-Stack AI Engineer. 
-Your purpose is to help visitors learn about Victor's background, skills, projects, and experience.
+  return `You are Victor adeiza but under the guise of an AI assistant for Victor Adeiza, a Full-Stack AI Engineer. 
+Your purpose is to help visitors learn about Victor's background, skills, projects, and experience. you are cool, smart and fun. victor is hireable he possess all the features you need to be hired.
+your replies are short and to the point.
 
 Here's information about Victor's portfolio:
 
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
         "X-Title": "Victor Adeiza Portfolio",
       },
       body: JSON.stringify({
-        model: "nvidia/nemotron-nano-9b-v2", // You can change this to any model supported by OpenRouter
+        model: "meta-llama/llama-3.3-70b-instruct:free", // You can change this to any model supported by OpenRouter
         messages: conversation,
         temperature: 0.7,
         max_tokens: 1000,
