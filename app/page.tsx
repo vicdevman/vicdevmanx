@@ -24,7 +24,7 @@ export default function App() {
       {/* <ThemeToggle /> */}
       <Chatbot/>
       {/* <div className="bg-linear-r from-primary to-secondary-color w-full h-30 sm:h-40 lg:hidden  absolute z-1"></div> */}
-      <main className="grid grid-cols-[1fr_1.05fr] mt-4 z-2 justify-center max-lg:grid-cols-1 max-lg:gap-8 max-w-310 mx-auto p-6 sm:p-8">
+      <main className="grid grid-cols-[1fr_1.05fr] mt-8 z-2 justify-center max-lg:grid-cols-1 max-lg:gap-8 max-w-310 mx-auto p-6 sm:p-8">
         <div className="lg:sticky top-36 sm:mt-10 mt-8 self-start flex flex-col justify-between">
           <div className="bg-primary w-[80%] h-30 -mt-18 -ml-6 rounded-2xl lg:block hidden  absolute z-1"></div>
           <Image
